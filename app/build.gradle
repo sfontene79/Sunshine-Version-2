@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'appthwack'
 
 android {
     compileSdkVersion 21
@@ -22,4 +23,10 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.2'
+}
+
+appthwack {
+    apiKey='cea41f36fa36ecec5a1ad31adf4c9dfd981159a7'
+    type='junit'
+    project='Sunshine'
 }

@@ -1,10 +1,13 @@
 package com.example.android.sunshine.app;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 /**
@@ -18,6 +21,13 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_detail, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        String weatherText = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
+
+        TextView textView = (TextView)fragmentView.findViewById(R.id.debug_text);
+        textView.setText(weatherText);
+        return fragmentView;
     }
+
 }

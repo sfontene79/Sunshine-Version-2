@@ -120,7 +120,7 @@ public class ForecastFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
+    public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
         private static final String BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily";
@@ -130,14 +130,15 @@ public class ForecastFragment extends Fragment {
         private static final String QUERY_COUNT = "cnt";
 
         @Override
-        protected Void doInBackground(String... params) {
-            // These two need to be declared outside the try/catch
+        protected String[] doInBackground(String... params) {
+            // These two need    to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             // Get the postal code from params
             String postalCode = params[0];
+            int numDays = 7;
 
             // Will contain the raw JSON response as a string.
             String forecastJsonStr = null;
@@ -148,7 +149,7 @@ public class ForecastFragment extends Fragment {
                 builder.appendQueryParameter(QUERY_POSTAL, postalCode);
                 builder.appendQueryParameter(QUERY_MODE, "json");
                 builder.appendQueryParameter(QUERY_UNIT, "metric");
-                builder.appendQueryParameter(QUERY_COUNT, "7");
+                builder.appendQueryParameter(QUERY_COUNT, Integer.toString(numDays));
 
                 URL url = new URL(builder.toString());
                 Log.d(LOG_TAG, url.toString());
@@ -200,6 +201,12 @@ public class ForecastFragment extends Fragment {
 
             Log.v(LOG_TAG, forecastJsonStr);
 
+            try {
+                return getWeatherDataFromJson(forecastJsonStr, numDays);
+            }
+            catch (JSONException e) {
+                Log.e(LOG_TAG, "Unable to parse forecast data", e);
+            }
             return null;
         }
 

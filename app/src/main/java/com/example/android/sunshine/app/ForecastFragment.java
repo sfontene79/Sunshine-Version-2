@@ -210,6 +210,17 @@ public class ForecastFragment extends Fragment {
             return null;
         }
 
+        @Override
+        protected void onPostExecute(String[] weekForecast) {
+            if (weekForecast != null) {
+                mForecastAdapter.clear();
+                for (String forecast : weekForecast) {
+                    mForecastAdapter.add(forecast);
+                }
+                mForecastAdapter.notifyDataSetChanged();
+            }
+        }
+
         /* The date/time conversion code is going to be moved outside the asynctask later,
          * so for convenience we're breaking it out into its own method now.
          */
@@ -302,9 +313,6 @@ public class ForecastFragment extends Fragment {
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
-            for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Forecast entry: " + s);
-            }
             return resultStrs;
 
         }

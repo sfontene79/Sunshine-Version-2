@@ -177,6 +177,9 @@ public class ForecastFragment extends Fragment {
                     }
                 }
             }
+
+            Log.v(LOG_TAG, forecastJsonStr);
+
             return null;
         }
     }

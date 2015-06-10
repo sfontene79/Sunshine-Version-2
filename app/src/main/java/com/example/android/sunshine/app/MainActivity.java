@@ -20,10 +20,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
+
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +60,28 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         else if (id == R.id.action_map) {
-            String locationKey = getString(R.string.pref_location_key);
-            String locationDefault = getString(R.string.pref_location_default);
-            String location = PreferenceManager.getDefaultSharedPreferences(this)
-                    .getString(locationKey, locationDefault);
-            Intent mapIntent = new Intent(Intent.ACTION_VIEW);
-            mapIntent.setData(Uri.parse("geo:0,0?q=" + location));
-            startActivity(mapIntent);
+            openLocationMap();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openLocationMap() {
+        String locationKey = getString(R.string.pref_location_key);
+        String locationDefault = getString(R.string.pref_location_default);
+        String location = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(locationKey, locationDefault);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW);
+        mapIntent.setData(Uri.parse("geo:0,0").buildUpon()
+                .appendQueryParameter("q", location)
+                .build());
+
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        }
+        else {
+            Log.w(LOG_TAG, "No suitable activity found to display location");
+        }
     }
 }

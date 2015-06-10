@@ -33,7 +33,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +59,8 @@ public class ForecastFragment extends Fragment {
     public ForecastFragment() {
     }
 
+    // ---------------------- LIFECYCLE ------------------ //
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,18 +73,6 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Create some dummy data for the ListView.  Here's a sample weekly forecast
-        String[] data = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-        final List<String> weekForecast = new ArrayList<>(Arrays.asList(data));
-
         // Now that we have some dummy forecast data, create an ArrayAdapter.
         // The ArrayAdapter will take data from a source (like our dummy forecast) and
         // use it to populate the ListView it's attached to.
@@ -92,7 +81,7 @@ public class ForecastFragment extends Fragment {
                         getActivity(), // The current context (this activity)
                         R.layout.list_item_forecast, // The name of the layout ID.
                         R.id.list_item_forecast_textview, // The ID of the textview to populate.
-                        weekForecast);
+                        new ArrayList<String>());
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -127,16 +116,30 @@ public class ForecastFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            FetchWeatherTask task = new FetchWeatherTask();
-            String locationKey = getString(R.string.pref_location_key);
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String location = preferences.getString(locationKey, getString(R.string.pref_location_default));
-            task.execute(location);
+            reloadData();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        reloadData();
+    }
+
+    // ---------------------- PRIVATE ------------------ //
+
+    private void reloadData() {
+        FetchWeatherTask task = new FetchWeatherTask();
+        String locationKey = getString(R.string.pref_location_key);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = preferences.getString(locationKey, getString(R.string.pref_location_default));
+        task.execute(location);
+    }
+
+    // ---------------------- INNER ------------------ //
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 

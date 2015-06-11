@@ -65,6 +65,8 @@ public class DetailActivityFragment extends Fragment {
         // Intent used for sharing
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+        //noinspection deprecation: used the flag stated by the lesson
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
         if (mShareProvider != null) {
             mShareProvider.setShareIntent(shareIntent);
